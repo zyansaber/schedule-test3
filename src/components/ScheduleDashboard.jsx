@@ -5,8 +5,10 @@ import ScheduleSidebar from './ScheduleSidebar';
 import StagesByClassChart from './charts/StagesByClassChart';
 import ForecastYearBreakdown from './charts/ForecastYearBreakdown';
 import LoadingOverlay from './LoadingOverlay';
+import useReminderChecker from '../hooks/useReminderChecker';
 
 const ScheduleDashboard = ({ data }) => {
+  useReminderChecker(data); // 
   const [filteredData, setFilteredData] = useState(data);
   const [filters, setFilters] = useState({});
   const [showCharts, setShowCharts] = useState(true);
