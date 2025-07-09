@@ -1,5 +1,5 @@
 import { getDatabase, ref, onValue, update } from "firebase/database";
-import emailjs from "emailjs-com";
+import emailjs from '@emailjs/browser';
 
 export const checkAndSendReminders = (scheduleData) => {
   const db = getDatabase();
