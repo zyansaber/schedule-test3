@@ -1,34 +1,34 @@
 import { useEffect } from 'react';
-import { db } from '../firebase';
+import { db } from '../utils/firebase';
 import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
-import { sendReminderEmail } from '../utils/ReminderService';
+import { sendEmailReminder } from '../utils/ReminderService';
 
 const useReminderChecker = (scheduleData) => {
   useEffect(() => {
     if (!scheduleData || scheduleData.length === 0) return;
 
     const checkReminders = async () => {
-      const reminderSnapshot = await getDocs(collection(db, 'reminders'));
+      const snapshot = await getDocs(collection(db, 'reminders'));
+      const reminders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      for (const reminderDoc of reminderSnapshot.docs) {
-        const reminder = reminderDoc.data();
-        const chassis = reminder.chassis;
-
-        const matchedItem = scheduleData.find(item => item.Chassis === chassis);
+      for (const reminder of reminders) {
+        const matchedItem = scheduleData.find(item => item.Chassis === reminder.selected_chassis);
         if (!matchedItem) continue;
 
-        const currentStage = matchedItem['Regent Production'] || '';
-        const initialStage = reminder.initialStage || '';
+        const currentProduction = matchedItem["Regent Production"];
+        const initialProduction = reminder.initial_production;
 
-        if (currentStage && currentStage !== initialStage) {
-          await sendReminderEmail(reminder.to_email, reminder.from_name, chassis, currentStage);
-
-          await updateDoc(doc(db, 'reminders', reminderDoc.id), {
-            initialStage: currentStage,
-            lastSentAt: new Date().toISOString()
+        if (currentProduction && currentProduction !== initialProduction) {
+          await sendEmailReminder({
+            from_name: 'Reminder Bot',
+            to_email: reminder.to_email,
+            message: reminder.message,
+            selected_chassis: reminder.selected_chassis,
+            chassis_count: 1
           });
 
-          console.log(`✅ Email sent and reminder updated for chassis: ${chassis}`);
+          const ref = doc(db, 'reminders', reminder.id);
+          await updateDoc(ref, { initial_production: currentProduction }); // 更新为当前值
         }
       }
     };
