@@ -6,6 +6,7 @@ import StagesByClassChart from './charts/StagesByClassChart';
 import ForecastYearBreakdown from './charts/ForecastYearBreakdown';
 import LoadingOverlay from './LoadingOverlay';
 import useReminderChecker from '../hooks/useReminderChecker';
+import ReminderPanel from './ReminderPanel';
 
 const ScheduleDashboard = ({ data }) => {
   useReminderChecker(data); // 
