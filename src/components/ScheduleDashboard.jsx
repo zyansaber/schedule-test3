@@ -70,6 +70,15 @@ const ScheduleDashboard = ({ data }) => {
             }
           }
 
+          
+          if (filters.type === 'stock') {
+            const val = item["Customer"] || "";
+            if (!(val.endsWith("stock") || val === "prototype")) return false;
+          } else if (filters.type === 'customer') {
+            const val = item["Customer"] || "";
+            if (val.endsWith("stock") || val === "prototype") return false;
+          }
+
           return true;
         } catch (error) {
           console.error("Error filtering item:", item, error);
