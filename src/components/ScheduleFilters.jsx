@@ -237,6 +237,20 @@ const ScheduleFilters = ({ data, onFilterChange }) => {
             {modelRanges.map(r => <option key={r} value={r}>{r || 'All Ranges'}</option>)}
           </select>
         </div>
+
+        {/* Type Filter */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+          <select
+            className="w-full border rounded py-2 px-3"
+            value={filters.type}
+            onChange={(e) => handleFilterChange('type', e.target.value)}
+          >
+            <option value="">All Types</option>
+            <option value="stock">Stock</option>
+            <option value="customer">Customer</option>
+          </select>
+        </div>
       </div>
 
       {/* Clear Filters */}
