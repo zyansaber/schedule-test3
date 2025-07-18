@@ -72,8 +72,11 @@ const ScheduleDashboard = ({ data }) => {
 
           
           if (filters.type === 'stock') {
-            const val = item["Customer"] || "";
+            const val = (item["Customer"] || "").toLowerCase();
             if (!(val.endsWith("stock") || val === "prototype")) return false;
+          } else if (filters.type === 'customer') {
+            const val = (item["Customer"] || "").toLowerCase();
+            if (val.endsWith("stock") || val === "prototype") return false;
           } else if (filters.type === 'customer') {
             const val = item["Customer"] || "";
             if (val.endsWith("stock") || val === "prototype") return false;
