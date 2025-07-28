@@ -1,7 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import emailjs from '@emailjs/browser';
 
-const ReminderModal = ({ selectedChassis, onClose }) => {
+const ReminderModal = ({ selectedChassis = [], onClose }) => {
+  if (!selectedChassis.length) return null;
+
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
