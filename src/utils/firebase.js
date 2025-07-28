@@ -1,6 +1,8 @@
-import { initializeApp } from 'firebase/app';
 
-// Web app's Firebase configuration - Using the same one as scheduleData.js
+import { initializeApp } from 'firebase/app';
+import { getDatabase, ref, set, get } from 'firebase/database';
+
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBcczqGj5X1_w9aCX1lOK4-kgz49Oi03Bg",
   authDomain: "scheduling-dd672.firebaseapp.com",
@@ -11,81 +13,40 @@ const firebaseConfig = {
   appId: "1:432092773012:web:ebc7203ea570b0da2ad281"
 };
 
-// Initialize Firebase - with error handling
+// Initialize Firebase
 let app;
-let db;
+let database;
 
 try {
   app = initializeApp(firebaseConfig);
-  console.log("Firebase initialized successfully");
+  database = getDatabase(app);
+  console.log("✅ Firebase (Realtime DB) initialized successfully");
 } catch (error) {
-  console.error("Error initializing Firebase:", error);
+  console.error("❌ Firebase initialization failed:", error);
 }
 
-// Add a reminder to Firestore
-  
+// Save dealer colors
+export const saveDealerColors = async (colors) => {
   try {
-      ...reminderData,
-    });
+    const dealerColorsRef = ref(database, 'dealerColors');
+    await set(dealerColorsRef, colors);
+    return true;
   } catch (error) {
-    console.error("Error adding reminder: ", error);
-    return { success: false, error: error.message };
+    console.error("Error saving dealer colors:", error);
+    throw error;
   }
 };
 
-// Get reminders for specific chassis
-  
+// Fetch dealer colors
+export const fetchDealerColors = async () => {
   try {
-    
-    const reminders = [];
-      reminders.push({
-      });
-    });
-    
-    return reminders;
+    const dealerColorsRef = ref(database, 'dealerColors');
+    const snapshot = await get(dealerColorsRef);
+    return snapshot.exists() ? snapshot.val() : null;
   } catch (error) {
-    console.error("Error fetching reminders: ", error);
-    return [];
+    console.error("Error fetching dealer colors:", error);
+    throw error;
   }
 };
 
-// Check for reminders that need to be sent
-
-  
-  try {
-    
-    const remindersToSend = [];
-    
-      
-      // Find the chassis in the current data
-      const chassisData = chassisDataArray.find(item => 
-        item.Chassis === reminder.chassis
-      );
-      
-      // If found and production stage has changed, add to send list
-      if (chassisData && 
-          chassisData["Regent Production"] !== reminder.productionStage) {
-        remindersToSend.push({
-          ...reminder,
-          newStage: chassisData["Regent Production"],
-        });
-      }
-    });
-    
-    return remindersToSend;
-  } catch (error) {
-    console.error("Error checking reminders: ", error);
-    return [];
-  }
-};
-
-// Delete a reminder
-  
-  try {
-    return { success: true };
-  } catch (error) {
-    console.error("Error deleting reminder: ", error);
-    return { success: false, error: error.message };
-  }
-};
-
+export { database };
