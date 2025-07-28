@@ -72,6 +72,13 @@ export const getRemindersForChassis = async (chassis) => {
 // Check for reminders that need to be sent
 export const checkReminders = async (chassisDataArray) => {
   if (!db) {
+    console.error("❌ Firestore DB not initialized in checkReminders");
+    return [];
+  }
+
+  console.log("✅ Firestore checkReminders triggered");
+
+  if (!db) {
     console.error("Firebase not initialized");
     return [];
   }
