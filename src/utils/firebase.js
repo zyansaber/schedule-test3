@@ -1,5 +1,4 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 
 // Web app's Firebase configuration - Using the same one as scheduleData.js
 const firebaseConfig = {
@@ -18,25 +17,16 @@ let db;
 
 try {
   app = initializeApp(firebaseConfig);
-  db = getFirestore(app);
   console.log("Firebase initialized successfully");
 } catch (error) {
   console.error("Error initializing Firebase:", error);
 }
 
 // Add a reminder to Firestore
-export const addReminder = async (reminderData) => {
-  if (!db) {
-    console.error("Firebase not initialized");
-    return { success: false, error: "Firebase not initialized" };
-  }
   
   try {
-    const docRef = await addDoc(collection(db, 'reminders'), {
       ...reminderData,
-      created: serverTimestamp(),
     });
-    return { success: true, id: docRef.id };
   } catch (error) {
     console.error("Error adding reminder: ", error);
     return { success: false, error: error.message };
@@ -44,21 +34,11 @@ export const addReminder = async (reminderData) => {
 };
 
 // Get reminders for specific chassis
-export const getRemindersForChassis = async (chassis) => {
-  if (!db) {
-    console.error("Firebase not initialized");
-    return [];
-  }
   
   try {
-    const q = query(collection(db, 'reminders'), where('chassis', '==', chassis));
-    const querySnapshot = await getDocs(q);
     
     const reminders = [];
-    querySnapshot.forEach((doc) => {
       reminders.push({
-        id: doc.id,
-        ...doc.data()
       });
     });
     
@@ -70,27 +50,12 @@ export const getRemindersForChassis = async (chassis) => {
 };
 
 // Check for reminders that need to be sent
-export const checkReminders = async (chassisDataArray) => {
-  if (!db) {
-    console.error("❌ Firestore DB not initialized in checkReminders");
-    return [];
-  }
 
-  console.log("✅ Firestore checkReminders triggered");
-
-  if (!db) {
-    console.error("Firebase not initialized");
-    return [];
-  }
   
   try {
-    const remindersRef = collection(db, "reminders");
-    const remindersSnapshot = await getDocs(remindersRef);
     
     const remindersToSend = [];
     
-    remindersSnapshot.forEach(doc => {
-      const reminder = doc.data();
       
       // Find the chassis in the current data
       const chassisData = chassisDataArray.find(item => 
@@ -101,7 +66,6 @@ export const checkReminders = async (chassisDataArray) => {
       if (chassisData && 
           chassisData["Regent Production"] !== reminder.productionStage) {
         remindersToSend.push({
-          id: doc.id,
           ...reminder,
           newStage: chassisData["Regent Production"],
         });
@@ -116,14 +80,8 @@ export const checkReminders = async (chassisDataArray) => {
 };
 
 // Delete a reminder
-export const deleteReminder = async (reminderId) => {
-  if (!db) {
-    console.error("Firebase not initialized");
-    return { success: false, error: "Firebase not initialized" };
-  }
   
   try {
-    await deleteDoc(doc(db, 'reminders', reminderId));
     return { success: true };
   } catch (error) {
     console.error("Error deleting reminder: ", error);
@@ -131,4 +89,3 @@ export const deleteReminder = async (reminderId) => {
   }
 };
 
-export { db };
